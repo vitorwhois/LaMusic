@@ -11,18 +11,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table( name = "tb_users")
-@AllArgsConstructor
+@Table(name = "tb_products")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-public class User {
+public class Product {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id ; 
+	private Long id;
 	
-	private String name;
-	private String email;
-	private String password;
-	private String phone;
+	
+	
+	
 }
