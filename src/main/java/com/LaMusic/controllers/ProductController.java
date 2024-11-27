@@ -20,14 +20,14 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("/products")
 public class ProductController {
 
 	private final ProductService productService;
-
+	
 	@GetMapping
-	public ResponseEntity<List<Product>> listCategories() {
-		return ResponseEntity.ok(productService.listCategories());
+	public ResponseEntity<List<Product>> listProducts() {
+		return ResponseEntity.ok(productService.listProducts());
 	}
 
 	@GetMapping("/{id}")
@@ -46,7 +46,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluirCategoria(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }

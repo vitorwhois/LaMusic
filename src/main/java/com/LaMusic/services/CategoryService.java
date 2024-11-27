@@ -38,6 +38,10 @@ public class CategoryService {
     public void deleteCategory(Long id) {
         categoryRepository.deleteById(id);
     }
+
+	public List<Category> getCategoriesByIds(List<Long> ids ) {
+		return categoryRepository.findAllById(ids);
+	}
     
 	
 }

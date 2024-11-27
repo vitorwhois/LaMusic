@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.LaMusic.controllers.dto.ProductDto;
+import com.LaMusic.entity.Category;
 import com.LaMusic.entity.Product;
 import com.LaMusic.repositories.ProductRepository;
 
@@ -14,9 +15,11 @@ import lombok.AllArgsConstructor;
 @Service
 public class ProductService {
 
-	ProductRepository productRepository;
+	private final ProductRepository productRepository;
+	private final CategoryService categoryService;
 	
-	public List<Product> listCategories(){
+	
+	public List<Product> listProducts(){
 		return productRepository.findAll();
 	}
 	
@@ -25,8 +28,10 @@ public class ProductService {
 				.orElseThrow(()-> new RuntimeException("Product not found!")) ;	
 	}
 	
-	public Product createProduct(ProductDto ProductDto) {
-		return productRepository.save(ProductDto.toProduct());
+	public Product createProduct(ProductDto productDto) {
+		 List<Category> categories = categoryService.getCategoriesByIds(productDto.categoryIds());
+		 Product product = productDto.toProduct(categories);
+		 return productRepository.save(product);
 	}
 	
 	public Product updateProduct(Long id, Product updatedProduct) {
@@ -38,6 +43,6 @@ public class ProductService {
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
-    
+
 	
 }

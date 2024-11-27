@@ -6,4 +6,5 @@ import com.LaMusic.entity.Category;
 
 public interface CategoryRepository extends JpaRepository <Category, Long>{
 
+	
 }

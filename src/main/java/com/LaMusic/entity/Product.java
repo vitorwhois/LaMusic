@@ -2,7 +2,8 @@ package com.LaMusic.entity;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Locale.Category;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,11 +35,12 @@ public class Product {
 	private Integer stock;	
 	private String imageUrl;
 	
+	@JsonIgnore
 	@ManyToMany
 	@JoinTable(
 			name = "product_category",
-			joinColumns = @JoinColumn(name = "produto_id"),
-			inverseJoinColumns = @JoinColumn (name = "categoria_id")			
+			joinColumns = @JoinColumn(name = "product_id"),
+			inverseJoinColumns = @JoinColumn (name = "category_id")			
 			)
 	private List<Category> categories;
 	
