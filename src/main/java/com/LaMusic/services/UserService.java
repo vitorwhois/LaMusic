@@ -3,6 +3,7 @@ package com.LaMusic.services;
 import org.springframework.stereotype.Service;
 
 import com.LaMusic.controllers.dto.CreateUserDto;
+import com.LaMusic.entity.LoginResponse;
 import com.LaMusic.entity.User;
 import com.LaMusic.repositories.UserRepository;
 
@@ -18,17 +19,18 @@ public class UserService {
 		return userRepository.save(dto.toEntity());
 	}
 
-	public User authenticateUser(String email, String password) {
+	public LoginResponse authenticateUser(String email, String password) {
 		var user = userRepository.findByEmail(email);
 		
 		if (user.isEmpty()) {
-			throw new RuntimeException("User not found.");
+			return new LoginResponse(false, "User not found.");
 		}
 		
-		if(!user.get().getPassword().equals(password)) {
-			throw new RuntimeException ("Password incorrect.");
-		}
-		return user.get();
+//		if(!user.get().getPassword().equals(password)) {
+//			throw new RuntimeException ("Password incorrect.");
+//		}
+		
+		return new LoginResponse(true, user.get());
 	}
 	
 }
