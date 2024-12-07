@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.LaMusic.controllers.dto.CategoryDto;
 import com.LaMusic.entity.Category;
+import com.LaMusic.entity.Product;
 import com.LaMusic.services.CategoryService;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ import lombok.AllArgsConstructor;
 public class CategoryController {
 
 	private final CategoryService categoryService;
+	
 
 	@GetMapping
 	public ResponseEntity<List<Category>> listCategories() {
@@ -49,6 +51,12 @@ public class CategoryController {
     public ResponseEntity<Void> excluirCategoria(@PathVariable Long id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/{id}/products")
+    public ResponseEntity<List<Product>> getProductsByCategoryId(@PathVariable Long id) {
+        List<Product> products = categoryService.getProductsByCategoryId(id);
+        return ResponseEntity.ok(products);
     }
 	
 }

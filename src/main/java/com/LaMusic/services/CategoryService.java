@@ -2,10 +2,12 @@ package com.LaMusic.services;
 
 import java.util.List;
 
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.LaMusic.controllers.dto.CategoryDto;
 import com.LaMusic.entity.Category;
+import com.LaMusic.entity.Product;
 import com.LaMusic.repositories.CategoryRepository;
 
 import lombok.AllArgsConstructor;
@@ -42,6 +44,10 @@ public class CategoryService {
 	public List<Category> getCategoriesByIds(List<Long> ids ) {
 		return categoryRepository.findAllById(ids);
 	}
-    
 	
+	public List<Product> getProductsByCategoryId(Long categoryId) {
+	        Category category = categoryRepository.findById(categoryId)
+	            .orElseThrow(() -> new RuntimeException("Categoria não encontrada com ID: " + categoryId));
+	        return category.getProducts();
+	}
 }
