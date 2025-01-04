@@ -1,8 +1,12 @@
 package com.LaMusic.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.LaMusic.controllers.dto.LoginDto;
 import com.LaMusic.entity.Cart;
 import com.LaMusic.entity.CartItem;
 import com.LaMusic.entity.Product;
@@ -13,7 +17,9 @@ import com.LaMusic.repositories.ProductRepository;
 import com.LaMusic.repositories.UserRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Service
 public class CartService {
 	
@@ -27,22 +33,13 @@ public class CartService {
     private  ProductRepository productRepository;
     
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 	
 
     @Transactional
 	public Cart addToCart (Long userId, Long productId, Integer quantity) {
+    	Cart cart = FindCartByUserIdOrCreateCart(userId);
 
-    	 User user = userRepository.findById(userId)
-    	            .orElseThrow(() -> new RuntimeException("User not found"));
-    	
-    	 Cart cart = cartRepository.findByUserId(userId)
-    	            .orElseGet(() -> {
-    	                Cart newCart = new Cart();
-    	                newCart.setUser(user); // Define o usuário no carrinho
-    	                return cartRepository.save(newCart); // Salva o carrinho novo
-    	            });
-		
 		Product product = productRepository.findById(productId)
 				.orElseThrow(() -> new RuntimeException("Product not Found"));
 		
@@ -57,19 +54,10 @@ public class CartService {
                 cart.getItens().add(newItem);
                 return newItem; // Adiciona o item ao carrinho
 				});
-//		
-//		item.setQuantity(item.getQuantity() + quantity);
-//		cartItemRepository.save(item);
-//		return cartRepository.save(cart);	
 		
-		 item.setQuantity(item.getQuantity() + quantity);
-
-	        // Salva o item no repositório
+		 item.setQuantity(item.getQuantity() + quantity);	        
 	        cartItemRepository.save(item);
-
-	        // Salva o carrinho atualizado
-	        return cartRepository.save(cart);
-	    
+	        return cartRepository.save(cart);	    
 	}
 	
 	public void clearCart(Long userId) {
@@ -77,11 +65,30 @@ public class CartService {
                 .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
         cartItemRepository.deleteAll(cart.getItens());
     }
+
+	public List<CartItem> getCartItemsByCartId(Long cartId) {
+		
+		return cartItemRepository.findByCart_Id(cartId);
+	}
 	
+	public Cart FindCartByUserIdOrCreateCart(Long userId) {
+		User user = userService.findById(userId);		
+		Cart cart = cartRepository.findByUserId(userId)
+				.orElseGet(() -> {
+				Cart newCart = new Cart();
+				newCart.setUser(user);
+				return cartRepository.save(newCart);
+				});		
+		return cart;
+	}
 	
+	public Cart createCartForUser(User user) {
+		 Cart cart =new Cart();
+		 cart.setUser(user);
+		 cartRepository.save(cart);
+		 return cart;
+	}
 	
-	
-	
-	
+		
 	
 }

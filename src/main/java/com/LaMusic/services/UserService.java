@@ -1,5 +1,7 @@
 package com.LaMusic.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.LaMusic.controllers.dto.CreateUserDto;
@@ -15,6 +17,11 @@ public class UserService {
 
 	private UserRepository userRepository;
 	
+	
+	public List<User> findAll() {
+		return userRepository.findAll();		
+	}
+	
 	public User createUser (CreateUserDto dto) {
 		return userRepository.save(dto.toEntity());
 	}
@@ -26,11 +33,15 @@ public class UserService {
 			return new LoginResponse(false, "User not found.");
 		}
 		
-//		if(!user.get().getPassword().equals(password)) {
-//			throw new RuntimeException ("Password incorrect.");
-//		}
-		
 		return new LoginResponse(true, user.get());
 	}
+
+	public User findById(Long userId) {
+		 User user = userRepository.findById(userId)
+				 .orElseThrow(() -> new RuntimeException("User not found!"));
+		 return user;
+	}
+
+
 	
 }

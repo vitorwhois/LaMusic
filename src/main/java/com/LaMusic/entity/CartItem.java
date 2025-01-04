@@ -12,7 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,19 +28,18 @@ public class CartItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "product_id", nullable = false)
 	private Product product;
-	
+
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", nullable = false)
+	@JoinColumn(name = "cart_id", nullable = false)
 	private Cart cart;
 
-    private Integer quantity;
+	private Integer quantity;
 
-    private BigDecimal price;
-    
-  	
+	private BigDecimal price;
+
 }
