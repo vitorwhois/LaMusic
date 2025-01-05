@@ -2,10 +2,11 @@ package com.LaMusic.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.LaMusic.controllers.dto.PlaceOrderDto;
 import com.LaMusic.entity.Order;
 import com.LaMusic.services.OrderService;
 
@@ -19,7 +20,7 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/place")
-    public ResponseEntity<Order> placeOrder(@RequestParam Long userId) {
-        return ResponseEntity.ok(orderService.placeOrder(userId));
+    public ResponseEntity<Order> placeOrder(@RequestBody PlaceOrderDto userId) {
+        return ResponseEntity.ok(orderService.placeOrder(userId.userId()));
     }
 }

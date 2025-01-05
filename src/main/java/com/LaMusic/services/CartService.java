@@ -88,6 +88,15 @@ public class CartService {
 		 cartRepository.save(cart);
 		 return cart;
 	}
+
+	public Cart FindCartByUserId(Long userId) {
+		return cartRepository.findByUserId(userId)
+		.orElseThrow(() -> new RuntimeException("User not Found"));
+	}
+
+	public void deleteCart(Cart cart) {
+		cartRepository.delete(cart);		
+	}
 	
 		
 	

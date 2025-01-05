@@ -21,11 +21,10 @@ public class OrderService {
 	private OrderRepository orderRepository;
 
 	@Autowired
-	private CartRepository cartRepository;
+	private CartService cartService;
 	
 	public Order placeOrder(Long userId) {
-		Cart cart = cartRepository.findByUserId(userId)
-				.orElseThrow(() -> new RuntimeException("Cart not found !"));
+		Cart cart = cartService.FindCartByUserId(userId);
 		
 		Order order = new Order();
 		order.setUser(cart.getUser());
@@ -48,10 +47,10 @@ public class OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
 
         orderRepository.save(order);
-        cartRepository.delete(cart);
+        cartService.deleteCart(cart);
 
-        return order;	
-		
+        return order;			
 	}
-
+	
+	
 }
