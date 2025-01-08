@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.LaMusic.entity.Cart;
 import com.LaMusic.entity.Order;
 import com.LaMusic.entity.OrderItem;
+import com.LaMusic.entity.User;
 import com.LaMusic.repositories.CartRepository;
 import com.LaMusic.repositories.OrderRepository;
 
@@ -50,6 +51,11 @@ public class OrderService {
         cartService.deleteCart(cart);
 
         return order;			
+	}
+
+	public List<Order> findOrdersByUserId(Long userId) {
+		var orders = orderRepository.findByUserId(userId);
+		return orders;
 	}
 	
 	

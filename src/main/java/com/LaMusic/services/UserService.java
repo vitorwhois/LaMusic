@@ -42,6 +42,11 @@ public class UserService {
 		 return user;
 	}
 
+	public void findByUserId(User userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 	
 }

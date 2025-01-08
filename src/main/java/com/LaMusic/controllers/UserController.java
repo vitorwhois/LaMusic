@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +17,10 @@ import com.LaMusic.controllers.dto.CreateUserDto;
 import com.LaMusic.controllers.dto.LoginDto;
 import com.LaMusic.entity.Cart;
 import com.LaMusic.entity.LoginResponse;
+import com.LaMusic.entity.Order;
 import com.LaMusic.entity.User;
 import com.LaMusic.services.CartService;
+import com.LaMusic.services.OrderService;
 import com.LaMusic.services.UserService;
 
 import lombok.AllArgsConstructor;
@@ -31,6 +34,7 @@ public class UserController {
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	private UserService userService;
 	private CartService cartService;
+	private OrderService orderService;
 
 	@GetMapping
 	public ResponseEntity<List<User>> listUsers(){
@@ -58,6 +62,12 @@ public class UserController {
 	        logger.error("Erro ao autenticar usuário: " + e.getMessage(), e);
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse(false, "Server Error"));
 	    }
+	}
+	
+	@GetMapping("/orders/{userId}")
+	public ResponseEntity<List<Order>> getAllOrdersByUser(@PathVariable Long userId){
+ 		List<Order> orders = orderService.findOrdersByUserId(userId);
+ 		return ResponseEntity.ok(orders);
 	}
 
 }
