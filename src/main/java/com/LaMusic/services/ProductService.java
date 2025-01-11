@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.LaMusic.controllers.dto.ProductDto;
+import com.LaMusic.controllers.dto.updatedProductDtoProduct;
 import com.LaMusic.entity.Category;
 import com.LaMusic.entity.Product;
 import com.LaMusic.repositories.ProductRepository;
@@ -34,15 +35,20 @@ public class ProductService {
 		 return productRepository.save(product);
 	}
 	
-	public Product updateProduct(Long id, Product updatedProduct) {
-        Product existingProduct = findProductById(id);
-        existingProduct.setName(updatedProduct.getName());
+	public Product updateProduct(updatedProductDtoProduct updatedProductDto) {
+        Product existingProduct = findProductById(updatedProductDto.id());
+        existingProduct.setName(updatedProductDto.name());
+        existingProduct.setStock(existingProduct.getStock() - updatedProductDto.stock());
         return productRepository.save(existingProduct);
     }
 
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
+
+	public void updateProductStock(Product product) {
+		productRepository.save(product);		
+	}
 
 	
 }

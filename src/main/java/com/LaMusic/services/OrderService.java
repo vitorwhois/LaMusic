@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.LaMusic.entity.Cart;
 import com.LaMusic.entity.Order;
 import com.LaMusic.entity.OrderItem;
+import com.LaMusic.entity.Product;
 import com.LaMusic.entity.User;
 import com.LaMusic.repositories.CartRepository;
 import com.LaMusic.repositories.OrderRepository;
@@ -24,6 +25,9 @@ public class OrderService {
 	@Autowired
 	private CartService cartService;
 	
+	@Autowired
+	private ProductService productService;
+	
 	public Order placeOrder(Long userId) {
 		Cart cart = cartService.FindCartByUserId(userId);
 		
@@ -34,11 +38,17 @@ public class OrderService {
 		List<OrderItem> orderItems = cart
 				.getItens()
 				.stream()
-				.map(cartItem -> new OrderItem(null,
+				.map(cartItem -> {
+					Product product = cartItem.getProduct();
+								product.setStock(product.getStock() - cartItem.getQuantity());
+								productService.updateProductStock(product);								
+						
+						return new OrderItem(null,
 						cartItem.getProduct(),
 						order,
 						cartItem.getQuantity(),
-						cartItem.getPrice()))
+						cartItem.getPrice());
+				})
 				.collect(
 						Collectors.toList());
 		
@@ -46,7 +56,7 @@ public class OrderService {
         order.setTotalAmount(orderItems.stream()
                 .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
-
+        		
         orderRepository.save(order);
         cartService.deleteCart(cart);
 
