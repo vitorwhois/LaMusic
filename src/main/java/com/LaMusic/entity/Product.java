@@ -35,6 +35,7 @@ public class Product {
 	private Integer stock;	
 	private String imageUrl;
 	
+	
 	@JsonIgnore
 	@ManyToMany
 	@JoinTable(

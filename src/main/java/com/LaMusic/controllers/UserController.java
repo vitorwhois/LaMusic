@@ -53,7 +53,7 @@ public class UserController {
 	        LoginResponse response = userService.authenticateUser(loginDto.email(), loginDto.password());
 	        
 	        if (response.isSuccess()) {
-	        	Cart cart = cartService.createCartForUser(response.getUser());
+	        	Cart cart = cartService.FindCartByUserIdOrCreateCart(response.getUser().getId());
 	            return ResponseEntity.ok(response);
 	        } else {
 	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);

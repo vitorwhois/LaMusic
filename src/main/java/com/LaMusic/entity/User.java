@@ -38,9 +38,6 @@ public class User {
 	
 	private String phone;
 	
-//	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//	private List<CartItem> cartItems;
-	
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
