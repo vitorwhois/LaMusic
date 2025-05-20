@@ -114,6 +114,7 @@ CREATE TABLE users (
 | 9    | Subir cliente Web (React Admin) em ambiente de hospedagem    | Alta      | Web             | Pendente     |
 | 10   | Subir cliente Mobile (React Native) em ambiente de hospedagem | Alta      | Mobile/DevOps   | Pendente     |
 | 11   | Analisar opções de hospedagem para Web e Mobile              | Baixa      | DevOps          | Planejado    |
+| 12   | Rastrear alterações por user - Add campo Responsible          | Baixa      | Backend          | Planejado    |
 
 ------
 
