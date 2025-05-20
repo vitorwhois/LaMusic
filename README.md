@@ -107,12 +107,12 @@ CREATE TABLE users (
 | 2    | Migrar entidades JPA para novo schema (UUIDs e novas tabelas) | Alta       | Backend         | Pendente     |
 | 3    | Expor endpoints para CRUD de `addresses`, `coupons`, `payments` | Alta       | Backend         | Pendente     |
 | 4    | Implementar módulo Admin (Web & Mobile) para CRUD de produtos e categorias | Média      | Fullstack/Admin | Planejado    |
-| 5    | Ajustar mobile para consumir novos endpoints (addresses, coupons) | Média      | Mobile          | Pendente     |
+| 5    | Ajustar mobile para consumir novos endpoints  | Média      | Mobile          | Pendente     |
 | 6    | Testes de integração e cobertura ≥ 80%                       | Baixa      | QA              | Não iniciado |
 | 7    | Documentação Swagger/OpenAPI completa                        | Média      | Backend         | Não iniciado |
 | 8    | Garantir deploy da API (Render via GitHub Actions)           | Alta       | DevOps/Backend  | Em produção  |
-| 9    | Subir cliente Web (React Admin) em ambiente de hospedagem    | Média      | Web             | Pendente     |
-| 10   | Subir cliente Mobile (React Native) nas stores/plataforma de teste | Média      | Mobile/DevOps   | Pendente     |
+| 9    | Subir cliente Web (React Admin) em ambiente de hospedagem    | Alta      | Web             | Pendente     |
+| 10   | Subir cliente Mobile (React Native) em ambiente de hospedagem | Alta      | Mobile/DevOps   | Pendente     |
 | 11   | Analisar opções de hospedagem para Web e Mobile              | Baixa      | DevOps          | Planejado    |
 
 ------
