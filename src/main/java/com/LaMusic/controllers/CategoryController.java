@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.LaMusic.controllers.dto.CategoryDto;
+import com.LaMusic.dto.CategoryDto;
 import com.LaMusic.entity.Category;
 import com.LaMusic.entity.Product;
 import com.LaMusic.services.CategoryService;

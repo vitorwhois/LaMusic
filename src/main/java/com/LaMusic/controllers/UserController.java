@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.LaMusic.controllers.dto.CreateUserDto;
-import com.LaMusic.controllers.dto.LoginDto;
+import com.LaMusic.dto.CreateUserDto;
+import com.LaMusic.dto.LoginDto;
 import com.LaMusic.entity.Cart;
 import com.LaMusic.entity.LoginResponse;
 import com.LaMusic.entity.Order;

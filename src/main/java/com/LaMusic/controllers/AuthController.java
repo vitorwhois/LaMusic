@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.LaMusic.controllers.dto.LoginRequest;
-import com.LaMusic.controllers.dto.*;
+import com.LaMusic.dto.*;
 import com.LaMusic.security.JwtUtil;
 
 @RestController
