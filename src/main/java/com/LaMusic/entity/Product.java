@@ -2,12 +2,13 @@ package com.LaMusic.entity;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
+import com.LaMusic.util.Auditable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -24,11 +25,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Product {
+public class Product extends Auditable{
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@GeneratedValue
+	private UUID id;
+	
 	private String name;
 	private String description;
 	private BigDecimal price;

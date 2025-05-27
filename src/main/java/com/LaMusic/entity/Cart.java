@@ -2,13 +2,13 @@ package com.LaMusic.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.LaMusic.util.Auditable;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -25,20 +25,20 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "tb_cart")
-public class Cart {
-	
+public class Cart extends Auditable {
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@GeneratedValue
+	private UUID id;
 
 	@OneToOne
 	@JoinColumn(name = "user_id", nullable = false)
-	private User user; 
-		
-	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true )
+	private User user;
+
+	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<CartItem> itens = new ArrayList<>();
 
-	public Cart(Long userId) {
+	public Cart(UUID userId) {
 		id = userId;
 	}
 }
