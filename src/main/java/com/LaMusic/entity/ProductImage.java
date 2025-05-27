@@ -1,11 +1,9 @@
 package com.LaMusic.entity;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.UUID; // Mudança
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -23,38 +21,36 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "product_images")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity
-@Table(name = "cart_items") // Nome da tabela conforme ADR
-public class CartItem {
+public class ProductImage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID) // Mudança
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @ManyToOne(fetch = FetchType.LAZY) // Eager fetch pode ser problemático para performance
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", nullable = false)
-    private Cart cart;
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
-    @Column(nullable = false)
-    private Integer quantity;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String url;
 
-    @Column(nullable = false)
-    private BigDecimal price; // Preço do produto no momento da adição ao carrinho (conforme ADR)
-    
+    @Column(name = "alt_text", columnDefinition = "TEXT")
+    private String altText;
+
+    @Column(name = "sort_order", columnDefinition = "INTEGER DEFAULT 0")
+    private int sortOrder;
+
+    @Column(name = "is_primary", columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean isPrimary;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private OffsetDateTime updatedAt;
 }
