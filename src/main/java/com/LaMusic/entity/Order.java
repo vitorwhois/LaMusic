@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,9 +38,24 @@ public class Order extends Auditable {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	
+	@ManyToOne
+	@JoinColumn(name ="coupon_id")
+	private Coupon coupon;
+	
+	@ManyToOne
+	@JoinColumn(name = "shipping_address_id")
+	private Address shippingAddress;
+	
+	@ManyToOne
+	@JoinColumn(name = "billing_address_id")
+	private Address billingAddress;
+	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-	private List<OrderItem> items = new ArrayList<>();
-			
+	private List<OrderItem> items;
+	
+	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+	private Payment payment;
+	
 	private LocalDateTime orderDate;
 	
 	private BigDecimal totalAmount;

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.LaMusic.util.Auditable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,6 +39,15 @@ public class Product extends Auditable{
 	private Integer stock;	
 	private String imageUrl;
 	
+	@OneToMany(mappedBy = "product")
+	@JsonManagedReference
+	private List <ProductLog> logs; 
+	
+	@OneToMany(mappedBy = "product")
+	private List<OrderItem> orderItems;
+	
+	@OneToMany(mappedBy = "product")
+	private List<CartItem> cartItems;
 	
 	@JsonIgnore
 	@ManyToMany
@@ -46,6 +57,4 @@ public class Product extends Auditable{
 			inverseJoinColumns = @JoinColumn (name = "category_id")			
 			)
 	private List<Category> categories;
-		
-	
 }

@@ -11,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -31,12 +32,12 @@ public class Cart extends Auditable {
 	@GeneratedValue
 	private UUID id;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<CartItem> itens = new ArrayList<>();
+	private List<CartItem> items = new ArrayList<>();
 
 	public Cart(UUID userId) {
 		id = userId;
