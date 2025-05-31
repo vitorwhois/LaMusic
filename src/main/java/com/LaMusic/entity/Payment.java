@@ -4,10 +4,8 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import com.LaMusic.util.Auditable;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,9 +35,6 @@ public class Payment extends Auditable{
 	@JoinColumn(name = "order_id", unique = true)
 	private Order order;
 
-    @Column(name = "order_id", nullable = false)
-    private UUID orderId;
-
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
@@ -49,12 +44,24 @@ public class Payment extends Auditable{
     @Column(nullable = false)
     private String status;
 
-    @CreationTimestamp
+    @Column(name = "transaction_id")
+    private String transactionId;
+
+    @Column(name = "gateway_response", columnDefinition = "jsonb")
+    private JsonNode gatewayResponse;
+
+    @Column(name = "error_code")
+    private String errorCode;
+
+    @Column(name = "error_message")
+    private String errorMessage;
+
+    @Column(name = "attempt_number")
+    private Integer attemptNumber;
+
+    @Column(name = "processed_at", columnDefinition = "TIMESTAMPTZ")
+    private OffsetDateTime processedAt;
+
     @Column(name = "created_at", columnDefinition = "TIMESTAMPTZ")
     private OffsetDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMPTZ")
-    private OffsetDateTime updatedAt;
-    
 }   
