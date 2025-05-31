@@ -1,57 +1,41 @@
 package com.LaMusic.entity;
 
-import java.math.BigDecimal;
+import jakarta.persistence.*;
+import lombok.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import org.hibernate.annotations.CreationTimestamp;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
 @Entity
 @Table(name = "product_logs")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ProductLog {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    @Column(name = "product_id", nullable = false)
-    private UUID productId;
-
-    @Column(nullable = false)
-    private String action;
-
-    @Column(name = "old_price", precision = 10, scale = 2)
-    private BigDecimal oldPrice;
-
-    @Column(name = "new_price", precision = 10, scale = 2)
-    private BigDecimal newPrice;
-
-    @CreationTimestamp
-    @Column(name = "changed_at", columnDefinition = "TIMESTAMPTZ")
-    private OffsetDateTime changedAt;
-    
     @ManyToOne
     @JoinColumn(name = "product_id")
     @JsonBackReference
     private Product product;
-    
-} 
+
+    private String action;
+
+    @Column(name = "old_values", columnDefinition = "jsonb")
+    private String oldValues;
+
+    @Column(name = "new_values", columnDefinition = "jsonb")
+    private String newValues;
+
+    @ManyToOne
+    @JoinColumn(name = "responsible_user_id")
+    private User responsibleUser;
+
+    @Column(name = "created_at", columnDefinition = "TIMESTAMPTZ")
+    private OffsetDateTime createdAt;
+}
