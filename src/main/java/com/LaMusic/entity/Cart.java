@@ -25,7 +25,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tb_cart")
+@Table(name = "tb_carts")
 public class Cart extends Auditable {
 
 	@Id
@@ -36,6 +36,8 @@ public class Cart extends Auditable {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
+	private String status;
+	
 	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<CartItem> items = new ArrayList<>();
 
