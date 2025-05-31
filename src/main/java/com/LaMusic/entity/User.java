@@ -1,6 +1,7 @@
 package com.LaMusic.entity;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +42,23 @@ public class User {
     private String password;
 
     private String phone;
+    
+    private String role;
+    
+    private Boolean email_verified;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
+    
+    @Column(name = "updated_at")
+    private OffsetDateTime updatedAt;
+    
+    @Column(name = "deleted_at")
+    private OffsetDateTime deletedAt;
+    
+    @OneToMany(mappedBy = "user")
+    private List<Address> addresses;
+    
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
@@ -52,15 +69,9 @@ public class User {
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Cart> carts;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private OffsetDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private OffsetDateTime updatedAt;
-
-    @Column(name = "deleted_at")
-    private OffsetDateTime deletedAt;
+    
+    @OneToMany(mappedBy = "responsibleUser")
+    private List<ProductLog> productLogs = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {
