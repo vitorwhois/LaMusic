@@ -44,11 +44,11 @@ public class Order extends Auditable {
 	
 	@ManyToOne
 	@JoinColumn(name = "shipping_address_id")
-	private Address shippingAddress;
+	private OrderAddress shippingAddress;
 	
 	@ManyToOne
 	@JoinColumn(name = "billing_address_id")
-	private Address billingAddress;
+	private OrderAddress billingAddress;
 	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<OrderItem> items;
