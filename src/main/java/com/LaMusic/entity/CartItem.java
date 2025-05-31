@@ -3,6 +3,7 @@ package com.LaMusic.entity;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import com.LaMusic.util.Auditable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -22,8 +23,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tb_cartItens")
-public class CartItem {
+@Table(name = "tb_cartItems")
+public class CartItem  extends Auditable{
 
 	@Id
 	@GeneratedValue
