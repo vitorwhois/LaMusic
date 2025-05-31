@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.LaMusic.controllers.dto.CategoryDto;
+import com.LaMusic.dto.CategoryDto;
 import com.LaMusic.entity.Category;
 import com.LaMusic.entity.Product;
 import com.LaMusic.repositories.CategoryRepository;

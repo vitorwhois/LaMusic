@@ -1,12 +1,11 @@
 package com.LaMusic.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.LaMusic.controllers.dto.LoginDto;
 import com.LaMusic.entity.Cart;
 import com.LaMusic.entity.CartItem;
 import com.LaMusic.entity.Product;
@@ -14,7 +13,6 @@ import com.LaMusic.entity.User;
 import com.LaMusic.repositories.CartItemRepository;
 import com.LaMusic.repositories.CartRepository;
 import com.LaMusic.repositories.ProductRepository;
-import com.LaMusic.repositories.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -37,13 +35,13 @@ public class CartService {
 	
 
     @Transactional
-	public Cart addToCart (Long userId, Long productId, Integer quantity) {
+	public Cart addToCart (UUID userId, Long productId, Integer quantity) {
     	Cart cart = FindCartByUserIdOrCreateCart(userId);
 
 		Product product = productRepository.findById(productId)
 				.orElseThrow(() -> new RuntimeException("Product not Found"));
 		
-		CartItem item = cart.getItens().stream()
+		CartItem item = cart.getItems().stream()
 				.filter(cartItem -> cartItem.getProduct().getId().equals(productId))
 				.findFirst()
 				.orElseGet(() ->{  CartItem newItem = new CartItem();
@@ -51,7 +49,7 @@ public class CartService {
                 newItem.setProduct(product);
                 newItem.setQuantity(0);
                 newItem.setPrice(product.getPrice());
-                cart.getItens().add(newItem);
+                cart.getItems().add(newItem);
                 return newItem; // Adiciona o item ao carrinho
 				});
 		
@@ -60,10 +58,10 @@ public class CartService {
 	        return cartRepository.save(cart);	    
 	}
 	
-	public void clearCart(Long userId) {
+	public void clearCart(UUID userId) {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
-        cartItemRepository.deleteAll(cart.getItens());
+        cartItemRepository.deleteAll(cart.getItems());
     }
 
 	public List<CartItem> getCartItemsByCartId(Long cartId) {
@@ -71,7 +69,7 @@ public class CartService {
 		return cartItemRepository.findByCart_Id(cartId);
 	}
 	
-	public Cart FindCartByUserIdOrCreateCart(Long userId) {
+	public Cart FindCartByUserIdOrCreateCart(UUID userId) {
 		User user = userService.findById(userId);		
 		Cart cart = cartRepository.findByUserId(userId)
 				.orElseGet(() -> {
@@ -89,7 +87,7 @@ public class CartService {
 		 return cart;
 	}
 
-	public Cart FindCartByUserId(Long userId) {
+	public Cart FindCartByUserId(UUID userId) {
 		return cartRepository.findByUserId(userId)
 		.orElseThrow(() -> new RuntimeException("User not Found"));
 	}

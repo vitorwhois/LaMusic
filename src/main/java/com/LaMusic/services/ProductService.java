@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.LaMusic.controllers.dto.ProductDto;
-import com.LaMusic.controllers.dto.updatedProductDtoProduct;
+import com.LaMusic.dto.ProductDto;
+import com.LaMusic.dto.updatedProductDtoProduct;
 import com.LaMusic.entity.Category;
 import com.LaMusic.entity.Product;
 import com.LaMusic.repositories.ProductRepository;

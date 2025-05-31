@@ -1,6 +1,7 @@
 package com.LaMusic.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.LaMusic.controllers.dto.CreateUserDto;
+import com.LaMusic.dto.CreateUserDto;
 import com.LaMusic.entity.LoginResponse;
 import com.LaMusic.entity.User;
 import com.LaMusic.repositories.UserRepository;
@@ -67,7 +68,7 @@ public class UserService {
 //		return new LoginResponse(true, user.get());
 //	}
 
-	public User findById(Long userId) {
+	public User findById(UUID userId) {
 		 User user = userRepository.findById(userId)
 				 .orElseThrow(() -> new RuntimeException("User not found!"));
 		 return user;
