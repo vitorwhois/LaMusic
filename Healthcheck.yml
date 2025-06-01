@@ -1,0 +1,16 @@
+db:
+  image: mysql:8.0
+  environment:
+    MYSQL_ROOT_PASSWORD: mysqlroot
+    MYSQL_DATABASE: laMusic
+  volumes:
+    - mysql-data:/var/lib/mysql
+  ports:
+    - "3306:3306"
+  networks:
+    - lamusic-network
+  healthcheck:
+    test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
