@@ -26,11 +26,11 @@ public class ProductLog {
 
     private String action;
 
-    @Column(name = "old_values", columnDefinition = "jsonb")
-    private String oldValues;
-
-    @Column(name = "new_values", columnDefinition = "jsonb")
-    private String newValues;
+//    @Column(name = "old_values", columnDefinition = "jsonb")
+//    private String oldValues;
+//
+//    @Column(name = "new_values", columnDefinition = "jsonb")
+//    private String newValues;
 
     @ManyToOne
     @JoinColumn(name = "responsible_user_id")

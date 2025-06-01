@@ -27,7 +27,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tb_orders")
+@Table(name = "orders")
 public class Order extends Auditable {
 
 	@Id

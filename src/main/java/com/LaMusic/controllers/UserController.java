@@ -1,6 +1,7 @@
 package com.LaMusic.controllers;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/orders/{userId}")
-	public ResponseEntity<List<Order>> getAllOrdersByUser(@PathVariable Long userId){
+	public ResponseEntity<List<Order>> getAllOrdersByUser(@PathVariable UUID userId){
  		List<Order> orders = orderService.findOrdersByUserId(userId);
  		return ResponseEntity.ok(orders);
 	}

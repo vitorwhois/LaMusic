@@ -1,10 +1,20 @@
 package com.LaMusic.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "coupons")
@@ -23,7 +33,10 @@ public class Coupon {
     private String type;
 
     private BigDecimal value;
-
+    
+    @OneToMany(mappedBy = "coupon")
+    private List<Order> orders;
+    
     @Column(name = "min_order_amount")
     private BigDecimal minOrderAmount;
 

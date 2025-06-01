@@ -2,6 +2,7 @@ package com.LaMusic.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import com.LaMusic.entity.Category;
 import com.LaMusic.entity.Product;
@@ -12,16 +13,10 @@ public record ProductDto(
 		BigDecimal price,
 		Integer stock,
 		String imageUrl,
-		List<Long> categoryIds ) {
+		List<UUID> categoryIds ) {
 
 	public Product toProduct(List<Category> categories) {
-		return new Product(null,
-				name,
-				description,
-				price,
-				stock,
-				imageUrl,
-				null, null, null, categories);
+		return new Product();
 	}
 	
 }

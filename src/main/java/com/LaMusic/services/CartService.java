@@ -35,7 +35,7 @@ public class CartService {
 	
 
     @Transactional
-	public Cart addToCart (UUID userId, Long productId, Integer quantity) {
+	public Cart addToCart (UUID userId, UUID productId, Integer quantity) {
     	Cart cart = FindCartByUserIdOrCreateCart(userId);
 
 		Product product = productRepository.findById(productId)
@@ -64,7 +64,7 @@ public class CartService {
         cartItemRepository.deleteAll(cart.getItems());
     }
 
-	public List<CartItem> getCartItemsByCartId(Long cartId) {
+	public List<CartItem> getCartItemsByCartId(UUID cartId) {
 		
 		return cartItemRepository.findByCart_Id(cartId);
 	}

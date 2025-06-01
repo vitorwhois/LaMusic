@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.LaMusic.entity.OrderItem;
+import com.LaMusic.entity.OrderAddress;
 
-public interface OrderItemRepository extends JpaRepository<OrderItem, UUID> {
-	
+public interface OrderAddressRepository extends JpaRepository<OrderAddress, UUID> {
+
 }

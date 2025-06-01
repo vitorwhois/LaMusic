@@ -23,7 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tb_cartItems")
+@Table(name = "cartItems")
 public class CartItem  extends Auditable{
 
 	@Id

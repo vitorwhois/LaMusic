@@ -39,22 +39,24 @@ public class OrderService {
 				.stream()
 				.map(cartItem -> {
 					Product product = cartItem.getProduct();
-								product.setStock(product.getStock() - cartItem.getQuantity());
+								product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
 								productService.updateProductStock(product);								
 						
-						return new OrderItem(null,
-						cartItem.getProduct(),
-						order,
-						cartItem.getQuantity(),
-						cartItem.getPrice());
+						return new OrderItem(
+//						null,
+//						cartItem.getProduct(),
+//						order,
+//						cartItem.getQuantity(),
+//						cartItem.getPrice()
+						);
 				})
 				.collect(
 						Collectors.toList());
 		
-		order.setItems(orderItems);
-        order.setTotalAmount(orderItems.stream()
-                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add));
+//		order.setItems(orderItems);
+//        order.setTotalAmount(orderItems.stream()
+//                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+//                .reduce(BigDecimal.ZERO, BigDecimal::add));
         		
         orderRepository.save(order);
         cartService.deleteCart(cart);
@@ -74,55 +76,23 @@ public class OrderService {
 				.getItems()
 				.stream()
 				.map(item -> new OrderItem(
-						null, 
-						item.getProduct(),
-						order,
-						item.getQuantity(),
-						item.getPrice()
-				)).collect(Collectors.toList());
-		
-		order.setItems(items);
-		order.setTotalAmount(items.
-				stream()
-				.map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-				.reduce(BigDecimal.ZERO, BigDecimal::add));
-		
-		orderRepository.save(order);
-		cartService.deleteCart(cart);		
-		return order;
-	}
-	
-//	public Order placeOrder3 (UUID userId) {
-//		var cart = cartService.FindCartByUserId(userId);
-//		
-//		Order order = new Order();
-//		order.setUser(cart.getUser());
-//		order.setOrderDate(LocalDateTime.now());
-		
-//		List<OrderItem> items = cart
-//				.getItems()
-//				.stream()
-//				.map(item -> 
-//				{Product product = item.getProduct();
-				
-//				product.setStock(product.getStock() - item.getQuantity());
-				
-//				item.getProduct().setStock(item.getProduct().getStock() - item.getQuantity());
-				
-//			return new OrderItem(
-//						null,
+//						null, 
 //						item.getProduct(),
 //						order,
 //						item.getQuantity(),
 //						item.getPrice()
-//						);
-//				}).collect(Collectors.toList());
-//		
-//		orderRepository.save(order);
-//		cartService.deleteCart(cart);
-//		return order;
+				)).collect(Collectors.toList());
 		
-//	}
+//		order.setItems(items);
+//		order.setTotalAmount(items.
+//				stream()
+//				.map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+//				.reduce(BigDecimal.ZERO, BigDecimal::add));
+//		
+		orderRepository.save(order);
+		cartService.deleteCart(cart);		
+		return order;
+	}
 	
 	public Order placeOrder4(UUID userId) {
 		var cart = cartService.FindCartByUserId(userId);
@@ -134,23 +104,18 @@ public class OrderService {
 		List <OrderItem> itemCart = cart.getItems()
 				.stream()
 				.map(items -> new OrderItem(
-						null,
-						items.getProduct(),
-						order,
-						items.getQuantity(),						
-						items.getPrice()
+//						null,
+//						items.getProduct(),
+//						order,
+//						items.getQuantity(),						
+//						items.getPrice()
 						)
 					).collect(Collectors.toList());
-						
-		
 		order.setItems(itemCart);
 		return order;
-		
 	}
-	
-	
-	
-	public List<Order> findOrdersByUserId(Long userId) {
+
+	public List<Order> findOrdersByUserId(UUID userId) {
 		var orders = orderRepository.findByUserId(userId);
 		return orders;
 	}

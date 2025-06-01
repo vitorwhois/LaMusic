@@ -43,7 +43,7 @@ public class CartController {
 	}	
 	    
 	@GetMapping("/{cartId}")
-	public ResponseEntity<List<CartItem>> getCartItemsByCartId(@PathVariable Long cartId){
+	public ResponseEntity<List<CartItem>> getCartItemsByCartId(@PathVariable UUID cartId){
 		List<CartItem> items = cartService.getCartItemsByCartId(cartId);
 		return ResponseEntity.ok(items);
 	}

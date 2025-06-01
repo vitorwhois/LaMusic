@@ -1,8 +1,8 @@
 package com.LaMusic.services;
 
 import java.util.List;
+import java.util.UUID;
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.LaMusic.dto.CategoryDto;
@@ -22,7 +22,7 @@ public class CategoryService {
 		return categoryRepository.findAll();
 	}
 	
-	public Category findCategoryById(Long id) {
+	public Category findCategoryById(UUID id) {
 		return categoryRepository.findById(id)
 				.orElseThrow(()-> new RuntimeException("Category not found!")) ;	
 	}
@@ -31,21 +31,21 @@ public class CategoryService {
 		return categoryRepository.save(categoryDto.toCategory());
 	}
 	
-	public Category updateCategory(Long id, Category updatedCategory) {
+	public Category updateCategory(UUID id, Category updatedCategory) {
         Category existingCategory = findCategoryById(id);
         existingCategory.setName(updatedCategory.getName());
         return categoryRepository.save(existingCategory);
     }
 
-    public void deleteCategory(Long id) {
+    public void deleteCategory(UUID id) {
         categoryRepository.deleteById(id);
     }
 
-	public List<Category> getCategoriesByIds(List<Long> ids ) {
-		return categoryRepository.findAllById(ids);
+	public List<Category> getCategoriesByIds(List<UUID> list ) {
+		return categoryRepository.findAllById(list);
 	}
 	
-	public List<Product> getProductsByCategoryId(Long categoryId) {
+	public List<Product> getProductsByCategoryId(UUID categoryId) {
 	        Category category = categoryRepository.findById(categoryId)
 	            .orElseThrow(() -> new RuntimeException("Categoria não encontrada com ID: " + categoryId));
 	        return category.getProducts();

@@ -1,6 +1,7 @@
 package com.LaMusic.controllers;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,7 +34,7 @@ public class CategoryController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Category> findCategoryById(@PathVariable Long id){
+	public ResponseEntity<Category> findCategoryById(@PathVariable UUID id){
 		return ResponseEntity.ok(categoryService.findCategoryById(id));
 	}
 	
@@ -43,18 +44,18 @@ public class CategoryController {
 	}
 	
 	@PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category category) {
+    public ResponseEntity<Category> updateCategory(@PathVariable UUID id, @RequestBody Category category) {
         return ResponseEntity.ok(categoryService.updateCategory(id, category));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluirCategoria(@PathVariable Long id) {
+    public ResponseEntity<Void> excluirCategoria(@PathVariable UUID id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
     
     @GetMapping("/{id}/products")
-    public ResponseEntity<List<Product>> getProductsByCategoryId(@PathVariable Long id) {
+    public ResponseEntity<List<Product>> getProductsByCategoryId(@PathVariable UUID id) {
         List<Product> products = categoryService.getProductsByCategoryId(id);
         return ResponseEntity.ok(products);
     }

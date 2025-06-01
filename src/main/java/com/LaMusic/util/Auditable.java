@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 public abstract class Auditable {
     
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at",updatable = false)
     protected OffsetDateTime createdAt;
 
     @Column(name = "updated_at")

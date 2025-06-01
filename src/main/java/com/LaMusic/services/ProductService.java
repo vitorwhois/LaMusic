@@ -1,6 +1,7 @@
 package com.LaMusic.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class ProductService {
 		return productRepository.findAll();
 	}
 	
-	public Product findProductById(Long id) {
+	public Product findProductById(UUID id) {
 		return productRepository.findById(id)
 				.orElseThrow(()-> new RuntimeException("Product not found!")) ;	
 	}
@@ -38,11 +39,11 @@ public class ProductService {
 	public Product updateProduct(updatedProductDtoProduct updatedProductDto) {
         Product existingProduct = findProductById(updatedProductDto.id());
         existingProduct.setName(updatedProductDto.name());
-        existingProduct.setStock(existingProduct.getStock() - updatedProductDto.stock());
+        existingProduct.setStockQuantity(existingProduct.getStockQuantity() - updatedProductDto.stock());
         return productRepository.save(existingProduct);
     }
 
-    public void deleteProduct(Long id) {
+    public void deleteProduct(UUID id) {
         productRepository.deleteById(id);
     }
 
