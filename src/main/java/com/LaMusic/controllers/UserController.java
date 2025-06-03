@@ -3,72 +3,56 @@ package com.LaMusic.controllers;
 import java.util.List;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.LaMusic.dto.CreateUserDto;
-import com.LaMusic.dto.LoginDto;
-import com.LaMusic.entity.Cart;
-import com.LaMusic.entity.LoginResponse;
-import com.LaMusic.entity.Order;
-import com.LaMusic.entity.User;
-import com.LaMusic.services.CartService;
-import com.LaMusic.services.OrderService;
+import com.LaMusic.dto.CreateUserRequest;
+import com.LaMusic.dto.UpdateUserRequest;
+import com.LaMusic.dto.UserDTO;
 import com.LaMusic.services.UserService;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-//@CrossOrigin(origins = "http://localhost:19002")
 @RestController
-@RequestMapping("/usuarios")
-@AllArgsConstructor
+@RequestMapping("/admin/users")
+@RequiredArgsConstructor
 public class UserController {
 
-	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-	private UserService userService;
-	private CartService cartService;
-	private OrderService orderService;
+    private final UserService userService;
 
-	@GetMapping
-	public ResponseEntity<List<User>> listUsers(){
-		return ResponseEntity.ok(userService.findAll());
-	}
-	
-	@PostMapping
-	public ResponseEntity<User> createUser(@RequestBody CreateUserDto createUserDto) {
-		User newUser = userService.createUser(createUserDto);
-		return ResponseEntity.ok(newUser);
-	}
-	
-	@PostMapping("/login")
-	public ResponseEntity<LoginResponse> login(@RequestBody LoginDto loginDto) {
-	    try {
-	        LoginResponse response = userService.authenticateUser(loginDto.email(), loginDto.password());
-	        
-	        if (response.isSuccess()) {
-	        	Cart cart = cartService.FindCartByUserIdOrCreateCart(response.getUser().getId());
-	            return ResponseEntity.ok(response);
-	        } else {
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-	        }
-	    } catch (RuntimeException e) {
-	        logger.error("Erro ao autenticar usuário: " + e.getMessage(), e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse(false, "Server Error"));
-	    }
-	}
-	
-	@GetMapping("/orders/{userId}")
-	public ResponseEntity<List<Order>> getAllOrdersByUser(@PathVariable UUID userId){
- 		List<Order> orders = orderService.findOrdersByUserId(userId);
- 		return ResponseEntity.ok(orders);
-	}
+    @GetMapping
+    public List<UserDTO> listUsers() {
+        return userService.findAll();
+    }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserDTO getUser(@PathVariable UUID id) {
+        return userService.findById(id);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserDTO createUser(@RequestBody CreateUserRequest request) {
+        return userService.create(request);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserDTO updateUser(@PathVariable UUID id, @RequestBody UpdateUserRequest request) {
+        return userService.update(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteUser(@PathVariable UUID id) {
+        userService.softDelete(id);
+    }
 }
