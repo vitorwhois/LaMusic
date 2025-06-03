@@ -12,6 +12,7 @@ import com.LaMusic.entity.User;
 import com.LaMusic.repositories.AddressRepository;
 import com.LaMusic.repositories.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -27,6 +28,12 @@ public class AddressService {
                 .map(mapper::toDTO)
                 .toList();
     }
+    
+    public Address findById(UUID id) {
+        return addressRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Endereço não encontrado"));
+    }
+
 
     public AddressDTO getById(UUID id) {
         return mapper.toDTO(addressRepository.findById(id)
