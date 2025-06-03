@@ -6,16 +6,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET_KEY = "minha-chave-secreta-jwt-minha-chave-secreta-jwt";
+    private final String SECRET_KEY = "minha-chave-secreta-jwt-minha-chave-secreta-jwt"; // mínimo de 256 bits
 
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
@@ -50,9 +53,14 @@ public class JwtUtil {
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 
-        // Adiciona a role no token
-        String role = userDetails.getAuthorities().stream().findFirst().get().getAuthority();
-        claims.put("role", role);
+        // Adiciona a role no token (sem prefixo ROLE_)
+        String role = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse("ROLE_USER")
+                .replace("ROLE_", ""); // remove o prefixo ROLE_ do Spring
+
+        claims.put("role", role); // Exemplo: "ADMIN" ou "USER"
 
         return createToken(claims, userDetails.getUsername());
     }

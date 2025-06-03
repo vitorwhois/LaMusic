@@ -1,7 +1,8 @@
 package com.LaMusic.services;
 
-import java.util.Collections;
+import java.util.List;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,25 +12,28 @@ import org.springframework.stereotype.Service;
 import com.LaMusic.entity.User;
 import com.LaMusic.repositories.UserRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
-	
-	
-	private UserRepository userRepository;
-	
-	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		User user = userRepository.findByEmail(email)
-				.orElseThrow(()-> new UsernameNotFoundException("Usuario não encontrado com o email: " + email));
-				
-		return new org.springframework.security.core.userdetails.User(
-				user.getEmail(),
-				user.getPassword(),
-				Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
-				);
-	}
-	
+
+    private final UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // Aqui é fundamental usar "ROLE_" + role
+        List<GrantedAuthority> authorities = List.of(
+            new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
+        );
+
+        return new org.springframework.security.core.userdetails.User(
+            user.getEmail(),
+            user.getPassword(),
+            authorities
+        );
+    }
 }

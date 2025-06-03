@@ -7,8 +7,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -21,12 +19,23 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-//            		.requestMatchers("/admin/products").hasRole("ADMIN")
-//                .requestMatchers("/auth/**").permitAll()
-//                .requestMatchers("/admin/**").hasRole("ADMIN")
-//                .requestMatchers("/user/**").hasAnyRole("ADMIN", "USER")
-//                .anyRequest().authenticated().
-            		.anyRequest().permitAll()
+                // Endpoints públicos
+                .requestMatchers("/auth/**").permitAll()
+
+                // Endpoints de leitura pública (ex: categorias)
+//                .requestMatchers("/categories").hasAnyRole("ADMIN", "USER")
+//                .requestMatchers("/categories/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/categories/admin", "/categories/admin/**").hasRole("ADMIN")
+
+
+                // Endpoints ADMIN
+//                .requestMatchers("categories/admin/**").hasRole("ADMIN")
+
+                // Endpoints de cliente logado
+                .requestMatchers("/client/**").hasRole("USER")
+
+                // Qualquer outra requisição precisa de autenticação
+                .anyRequest().permitAll()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
@@ -38,4 +47,5 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
 }

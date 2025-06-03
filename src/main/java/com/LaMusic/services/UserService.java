@@ -29,11 +29,18 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDTO findById(UUID id) {
+    public User findById(UUID id) {
         User user = userRepository.findById(id)
                 .filter(u -> !u.isDeleted())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        return toDTO(user);
+        return user;
+    }
+    
+    public UserDTO findUserDtoById(UUID id) {
+    	User user = userRepository.findById(id)
+    			.filter(u -> !u.isDeleted())
+    			.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    	return toDTO(user);
     }
 
     public UserDTO create(CreateUserRequest request) {
