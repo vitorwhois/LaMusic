@@ -15,7 +15,7 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 
-    private final String SECRET_KEY = "minha-chave-secreta-jwt-minha-chave-secreta-jwt"; // pode usar uma de 256 bits
+    private final String SECRET_KEY = "minha-chave-secreta-jwt-minha-chave-secreta-jwt";
 
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
@@ -49,6 +49,11 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+
+        // Adiciona a role no token
+        String role = userDetails.getAuthorities().stream().findFirst().get().getAuthority();
+        claims.put("role", role);
+
         return createToken(claims, userDetails.getUsername());
     }
 
