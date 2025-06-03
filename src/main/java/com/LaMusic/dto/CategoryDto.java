@@ -1,11 +1,16 @@
 package com.LaMusic.dto;
 
-import com.LaMusic.entity.Category;
+import lombok.Data;
 
-public record CategoryDto(String name) {
+import java.util.UUID;
 
-	public Category toCategory() {
-		return new Category(); 
-	}
-
+@Data
+public class CategoryDTO {
+    private UUID id;
+    private String name;
+    private String slug;
+    private String description;
+    private UUID parentId;
+    private Integer sortOrder;
+    private boolean isActive;
 }

@@ -27,7 +27,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class Address extends Auditable {
+public class Address {
     @Id
     @GeneratedValue
     private UUID id;

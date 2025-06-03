@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.LaMusic.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -43,7 +46,8 @@ public class User {
 
     private String phone;
     
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     
     private Boolean email_verified;
 

@@ -70,11 +70,11 @@ public class CartService {
 	}
 	
 	public Cart FindCartByUserIdOrCreateCart(UUID userId) {
-		User user = userService.findById(userId);		
+//		User user = userService.findById(userId);		
 		Cart cart = cartRepository.findByUserId(userId)
 				.orElseGet(() -> {
 				Cart newCart = new Cart();
-				newCart.setUser(user);
+//				newCart.setUser();
 				return cartRepository.save(newCart);
 				});		
 		return cart;

@@ -90,7 +90,6 @@ public class Product {
     private List<CartItem> cartItems;
     
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<ProductImage> images;
 
     @JsonIgnore
