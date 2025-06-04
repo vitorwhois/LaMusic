@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.LaMusic.dto.CategoryDTO;
+import com.LaMusic.entity.Category;
+import com.LaMusic.entity.Product;
 import com.LaMusic.services.CategoryService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,13 +30,19 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getAll() {
-        return ResponseEntity.ok(categoryService.findAll());
+    public ResponseEntity<List<Category>> getAll() {
+        return ResponseEntity.ok(categoryService.findAll2());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(categoryService.findById(id));
+    public ResponseEntity<Category> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(categoryService.findById2(id));
+    }
+    
+    @GetMapping("/{id}/products")
+    public ResponseEntity<List<Product>> getProductsByCategoryId(@PathVariable UUID id) {
+        List<Product> products = categoryService.getProductsByCategoryId(id);
+        return ResponseEntity.ok(products);
     }
 
     @PostMapping("/admin")

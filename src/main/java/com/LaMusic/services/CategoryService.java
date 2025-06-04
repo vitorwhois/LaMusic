@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.security.access.intercept.RunAsImplAuthenticationProvider;
 import org.springframework.stereotype.Service;
 
 import com.LaMusic.Mappers.CategoryMapper;
 import com.LaMusic.dto.CategoryDTO;
 import com.LaMusic.entity.Category;
+import com.LaMusic.entity.Product;
 import com.LaMusic.repositories.CategoryRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,10 +27,19 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
+    public List<Category>findAll2(){
+    	return categoryRepository.findAll();
+    }
+    
     public CategoryDTO findById(UUID id) {
         return categoryRepository.findById(id)
                 .map(CategoryMapper::toDTO)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
+    }
+    
+    public Category findById2(UUID id) {
+    	return categoryRepository.findById(id)
+    			.orElseThrow(() -> new RuntimeException("Category not found"));
     }
 
     public CategoryDTO create(CategoryDTO dto) {
@@ -66,5 +77,11 @@ public class CategoryService {
 	public List<Category> getCategoriesByIds(List<UUID> categoryIds) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public List<Product> getProductsByCategoryId(UUID id) {
+		Category category = categoryRepository.findById(id)
+				.orElseThrow(()-> new RuntimeException("Category not Found !"));
+		return category.getProducts();
 	}
 }

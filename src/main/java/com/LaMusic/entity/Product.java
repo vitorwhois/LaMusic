@@ -2,6 +2,8 @@ package com.LaMusic.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -87,12 +89,13 @@ public class Product {
     private List<OrderItem> orderItems;
 
     @OneToMany(mappedBy = "product")
+    @JsonManagedReference
     private List<CartItem> cartItems;
     
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> images;
 
-    @JsonIgnore
+    @JsonBackReference
     @ManyToMany
     @JoinTable(
         name = "product_categories",

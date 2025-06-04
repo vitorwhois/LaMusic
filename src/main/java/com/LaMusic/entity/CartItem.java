@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import com.LaMusic.util.Auditable;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -32,6 +33,7 @@ public class CartItem  extends Auditable{
 
 	@ManyToOne
 	@JoinColumn(name = "product_id", nullable = false)
+	@JsonBackReference
 	private Product product;
 
 	@JsonIgnore

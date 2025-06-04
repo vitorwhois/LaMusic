@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.LaMusic.util.Auditable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,8 +45,8 @@ public class Category extends Auditable{
 	
 	private boolean isActive;
 	
-	@JsonIgnore
 	@ManyToMany(mappedBy = "categories")
+	@JsonManagedReference
 	private List<Product> products;
 	
 }
