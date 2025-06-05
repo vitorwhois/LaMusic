@@ -28,7 +28,7 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping("/add")
-    public ResponseEntity<Cart> addToCart(@RequestBody @Validated AddCartDto dto) {
+    public ResponseEntity<Cart> addToCart(@RequestBody @Validated AddCartDTO dto) {
         if (dto.productId() == null || dto.userId() == null || dto.quantity() == null) {
             throw new IllegalArgumentException("Campos obrigatórios não podem ser nulos.");
         }
