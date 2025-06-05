@@ -57,8 +57,8 @@ public class JwtUtil {
         String role = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
-                .orElse("ROLE_USER")
-                .replace("ROLE_", ""); // remove o prefixo ROLE_ do Spring
+                .orElse("ROLE_USER");
+//                .replace("ROLE_", ""); // remove o prefixo ROLE_ do Spring
 
         claims.put("role", role); // Exemplo: "ADMIN" ou "USER"
 
