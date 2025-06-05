@@ -5,11 +5,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public record OrderResponseDto(
+public record OrderResponseDTO(
     UUID orderId,
     LocalDateTime orderDate,
     BigDecimal totalAmount,
-    OrderAddressDto shippingAddress,
-    OrderAddressDto billingAddress,
-    List<OrderItemResponseDto> items
+    OrderAddressDTO shippingAddress,
+    OrderAddressDTO billingAddress,
+    List<OrderItemResponseDTO> items
 ) {}

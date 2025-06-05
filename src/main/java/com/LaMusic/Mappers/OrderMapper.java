@@ -4,24 +4,24 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.LaMusic.dto.OrderAddressDto;
-import com.LaMusic.dto.OrderItemResponseDto;
-import com.LaMusic.dto.OrderResponseDto;
+import com.LaMusic.dto.OrderAddressDTO;
+import com.LaMusic.dto.OrderItemResponseDTO;
+import com.LaMusic.dto.OrderResponseDTO;
 import com.LaMusic.entity.Order;
 
 @Component
 public class OrderMapper {
 
-	public static OrderResponseDto mapToDto(Order order) {
-	    List<OrderItemResponseDto> items = order.getItems().stream()
-	        .map(item -> new OrderItemResponseDto(
+	public static OrderResponseDTO mapToDto(Order order) {
+	    List<OrderItemResponseDTO> items = order.getItems().stream()
+	        .map(item -> new OrderItemResponseDTO(
 	            item.getProduct().getId(),
 	            item.getProduct().getName(),
 	            item.getQuantity(),
 	            item.getUnitPrice()
 	        )).toList();
 
-	    OrderAddressDto shipping = new OrderAddressDto(
+	    OrderAddressDTO shipping = new OrderAddressDTO(
 	        order.getShippingAddress().getRecipientName(),
 	        order.getShippingAddress().getStreet(),
 	        order.getShippingAddress().getNumber(),
@@ -33,7 +33,7 @@ public class OrderMapper {
 	        order.getShippingAddress().getCountry()
 	    );
 
-	    OrderAddressDto billing = new OrderAddressDto(
+	    OrderAddressDTO billing = new OrderAddressDTO(
 	        order.getBillingAddress().getRecipientName(),
 	        order.getBillingAddress().getStreet(),
 	        order.getBillingAddress().getNumber(),
@@ -45,7 +45,7 @@ public class OrderMapper {
 	        order.getBillingAddress().getCountry()
 	    );
 
-	    return new OrderResponseDto(
+	    return new OrderResponseDTO(
 	        order.getId(),
 	        order.getOrderDate(),
 	        order.getTotalAmount(),

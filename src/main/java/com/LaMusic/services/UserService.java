@@ -36,7 +36,7 @@ public class UserService {
         return user;
     }
     
-    public UserDTO findUserDtoById(UUID id) {
+    public UserDTO findUserDTOById(UUID id) {
     	User user = userRepository.findById(id)
     			.filter(u -> !u.isDeleted())
     			.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));

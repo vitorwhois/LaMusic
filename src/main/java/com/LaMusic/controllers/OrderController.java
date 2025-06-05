@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.LaMusic.dto.OrderResponseDto;
+import com.LaMusic.dto.OrderResponseDTO;
 import com.LaMusic.entity.Order;
 import com.LaMusic.services.OrderService;
 
@@ -26,7 +26,7 @@ public class OrderController {
     
     
     @PostMapping("/place")
-    public ResponseEntity<OrderResponseDto> placeOrder(@RequestParam UUID userId,@RequestParam UUID shippingAddressId,
+    public ResponseEntity<OrderResponseDTO> placeOrder(@RequestParam UUID userId,@RequestParam UUID shippingAddressId,
     		@RequestParam UUID billingAddressId) {
         return ResponseEntity.ok(orderService.placeOrder(userId, shippingAddressId, billingAddressId));
     }

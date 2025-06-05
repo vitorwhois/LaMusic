@@ -30,7 +30,7 @@ public class ClientController {
     @GetMapping("/me")
     public UserDTO getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
-        return userService.findUserDtoById(user.getId());
+        return userService.findUserDTOById(user.getId());
     }
     
     @PreAuthorize("hasRole('ROLE_USER')")

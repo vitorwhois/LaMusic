@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.LaMusic.Mappers.OrderMapper;
-import com.LaMusic.dto.OrderResponseDto;
+import com.LaMusic.dto.OrderResponseDTO;
 import com.LaMusic.entity.Address;
 import com.LaMusic.entity.Cart;
 import com.LaMusic.entity.Order;
@@ -36,7 +36,7 @@ public class OrderService {
     AddressService addressService;
     
 
-    public OrderResponseDto placeOrder(UUID userId, UUID shippingAddressId, UUID billingAddressId) {
+    public OrderResponseDTO placeOrder(UUID userId, UUID shippingAddressId, UUID billingAddressId) {
         Cart cart = cartService.findCartByUserId(userId);
 
         Address shipping = addressService.findById(shippingAddressId);

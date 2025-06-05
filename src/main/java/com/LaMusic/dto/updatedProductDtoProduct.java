@@ -2,6 +2,6 @@ package com.LaMusic.dto;
 
 import java.util.UUID;
 
-public record updatedProductDtoProduct(UUID id, String name, Integer stock) {
+public record updatedProductDTOProduct(UUID id, String name, Integer stock) {
 
 }

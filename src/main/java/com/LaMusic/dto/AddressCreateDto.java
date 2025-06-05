@@ -2,7 +2,7 @@ package com.LaMusic.dto;
 
 import java.util.UUID;
 
-public record AddressCreateDto(
+public record AddressCreateDTO(
 	 UUID id,
      String cep,
      String country,

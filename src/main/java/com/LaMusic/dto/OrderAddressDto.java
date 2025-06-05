@@ -1,6 +1,6 @@
 package com.LaMusic.dto;
 
-public record OrderAddressDto(
+public record OrderAddressDTO(
     String recipientName,
     String street,
     String number,
