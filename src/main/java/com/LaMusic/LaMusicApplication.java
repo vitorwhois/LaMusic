@@ -9,7 +9,7 @@ import com.LaMusic.util.EnvLoader;
 public class LaMusicApplication {
 
 	public static void main(String[] args) {
-		EnvLoader.loadEnv();
+		//EnvLoader.loadEnv();
 		SpringApplication.run(LaMusicApplication.class, args);
 	}
 
