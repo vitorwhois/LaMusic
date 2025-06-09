@@ -34,6 +34,7 @@ public class Cart extends Auditable {
 
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
+	@JsonBackReference
 	private User user;
 
 	private String status;

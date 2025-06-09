@@ -72,6 +72,7 @@ public class User {
     private List<Address> address;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Cart> carts;
     
     @OneToMany(mappedBy = "responsibleUser")
