@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 
 import com.LaMusic.dto.AddCartDTO;
 import com.LaMusic.entity.Cart;
@@ -29,15 +31,27 @@ public class CartController {
 
     @PostMapping("/add")
     public ResponseEntity<Cart> addToCart(@RequestBody @Validated AddCartDTO dto) {
-        if (dto.productId() == null || dto.userId() == null || dto.quantity() == null) {
+        if (dto.productId() == null || dto.quantity() == null) {
             throw new IllegalArgumentException("Campos obrigatórios não podem ser nulos.");
         }
-        Cart cart = cartService.addToCart(dto.userId(), dto.productId(), dto.quantity());
+
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Cart cart = cartService.addToCart(userId, dto.productId(), dto.quantity());
         return ResponseEntity.ok(cart);
     }
 
-    @DeleteMapping("/clear/{userId}")
-    public ResponseEntity<Void> clearCart(@PathVariable UUID userId) {
+
+    @GetMapping("/user")
+    public ResponseEntity<Cart> getCartByUserId() {
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Cart cart = cartService.findOrCreateCartByUserId(userId);
+        cart.setItems(cartService.getCartItemsByCartId(cart.getId()));
+        return ResponseEntity.ok(cart);
+    }
+
+    @DeleteMapping("/clear")
+    public ResponseEntity<Void> clearCart() {
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         cartService.clearCart(userId);
         return ResponseEntity.noContent().build();
     }

@@ -53,14 +53,17 @@ public class JwtUtil {
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 
-        // Adiciona a role no token (sem prefixo ROLE_)
+        // Exemplo: userDetails instanceof CustomUserDetails com getId()
         String role = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
                 .orElse("ROLE_USER");
-//                .replace("ROLE_", ""); // remove o prefixo ROLE_ do Spring
 
-        claims.put("role", role); // Exemplo: "ADMIN" ou "USER"
+        claims.put("role", role);
+
+        if (userDetails instanceof CustomUserDetails customUser) {
+            claims.put("userId", customUser.getId().toString());
+        }
 
         return createToken(claims, userDetails.getUsername());
     }
@@ -80,5 +83,10 @@ public class JwtUtil {
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
+
+    public UUID extractUserId(String token) {
+    String userIdString = extractClaim(token, claims -> claims.get("userId", String.class));
+    return UUID.fromString(userIdString);
     }
 }
