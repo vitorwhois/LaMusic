@@ -64,12 +64,12 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
 
-    @DeleteMapping("/items") 
+/*     @DeleteMapping("/items") 
     public ResponseEntity<Void> clearMyCart() {
         UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         cartService.clearCart(userId);
         return ResponseEntity.noContent().build();
-    }
+    } */
 
     @GetMapping("/{cartId}")
     public ResponseEntity<List<CartItem>> getCartItemsByCartId(@PathVariable UUID cartId) {
