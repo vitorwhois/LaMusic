@@ -5,7 +5,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=${DATABASE_URL}?prepareThreshold=0
       - DATABASE_USERNAME=${DATABASE_USERNAME}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DDL_AUTO=update
