@@ -1,6 +1,7 @@
 package com.LaMusic.services;
 import java.util.List;
 import java.util.UUID;
+import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
 
@@ -52,6 +53,36 @@ public class CartService {
         return savedCart;
     }
 
+    @Transactional
+    public Cart removeItemFromCart(UUID userId, UUID productId) {
+        Cart cart = findCartByUserId(userId); // Usamos findCartByUserId para não criar um novo se não existir
+                                            // ou se o usuário não tiver um carrinho, um erro será lançado.
+
+        if (cart.getItems() == null) {
+            // Se não há itens, não há nada a remover.
+            // Retorna o carrinho como está (vazio de itens).
+            cart.setItems(new ArrayList<>()); // Garante que não seja nulo no retorno
+            return cart;
+        }
+
+        CartItem itemToRemove = cart.getItems().stream()
+            .filter(item -> item.getProduct() != null && item.getProduct().getId().equals(productId))
+            .findFirst()
+            .orElse(null); // Não lança exceção se o item não estiver no carrinho
+
+        if (itemToRemove != null) {
+            cart.getItems().remove(itemToRemove); // Remove da coleção em memória do carrinho
+            cartItemRepository.delete(itemToRemove); // Remove o item do banco de dados
+            // Salvar o carrinho pode ser necessário se a remoção do item da coleção
+            // não for automaticamente persistida pela remoção do CartItem (depende do mapeamento e cascade)
+            // cartRepository.save(cart); // Descomente se necessário
+        }
+        // Mesmo que o item não tenha sido encontrado, retornamos o estado atual do carrinho.
+        // Recarrega os itens para garantir que o estado retornado esteja completo e atualizado
+        cart.setItems(getCartItemsByCartId(cart.getId()));
+        return cart;
+    }
+
     public void clearCart(UUID userId) {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
@@ -81,4 +112,6 @@ public class CartService {
     public void deleteCart(Cart cart) {
         cartRepository.delete(cart);
     }
+
+    
 }
