@@ -33,7 +33,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
                                     throws ServletException, IOException {
 
-        // ⛔ IGNORAR /auth/*
         String path = request.getServletPath();
         if (path.startsWith("/auth")) {
             filterChain.doFilter(request, response);
@@ -53,11 +52,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 
             if (jwtUtil.validateToken(jwt, userDetails)) {
+                UUID userId = jwtUtil.extractUserId(jwt);
                 String role = jwtUtil.extractClaim(jwt, claims -> claims.get("role", String.class));
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
 
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, List.of(authority));
+                        new UsernamePasswordAuthenticationToken(userId, null, List.of(authority));
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }

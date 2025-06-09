@@ -47,7 +47,9 @@ public class CartService {
         item.setQuantity(item.getQuantity() + quantity);
 
         cartItemRepository.save(item);
-        return cartRepository.save(cart);
+        Cart savedCart = cartRepository.save(cart);
+        savedCart.setItems(getCartItemsByCartId(savedCart.getId()));
+        return savedCart;
     }
 
     public void clearCart(UUID userId) {
