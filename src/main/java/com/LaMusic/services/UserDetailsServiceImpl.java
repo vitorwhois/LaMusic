@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.LaMusic.entity.User;
 import com.LaMusic.repositories.UserRepository;
+import com.LaMusic.security.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
