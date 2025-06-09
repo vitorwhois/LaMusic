@@ -2,12 +2,10 @@ package com.LaMusic.services;
 import java.util.List;
 import java.util.UUID;
 import java.util.ArrayList;
-import java.util.stream.Collectors; // Logger
+import java.util.stream.Collectors;
 
-import org.slf4j.Logger; // Logger
-import org.slf4j.LoggerFactory; // Logger
-import org.springframework.stereotype.Service;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.LaMusic.entity.Cart;
@@ -19,20 +17,17 @@ import com.LaMusic.repositories.CartRepository;
 import com.LaMusic.repositories.ProductRepository;
 
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 
 @Service
-// @AllArgsConstructor // Remova se for adicionar o construtor manualmente para o logger ou use @RequiredArgsConstructor
 public class CartService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CartService.class); // Adicionar logger
+    private static final Logger logger = LoggerFactory.getLogger(CartService.class);
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
     private final UserService userService;
 
-    // Adicionar construtor se removeu @AllArgsConstructor ou se @RequiredArgsConstructor não cobre todos os campos
     public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository,
                        ProductRepository productRepository, UserService userService) {
         this.cartRepository = cartRepository;
@@ -41,12 +36,11 @@ public class CartService {
         this.userService = userService;
     }
 
-     @Transactional
+    @Transactional
     public Cart addToCart(UUID userId, UUID productId, Integer quantity) {
         logger.info("addToCart - Início: userId={}, productId={}, quantity={}", userId, productId, quantity);
 
-        Cart cart = findOrCreateCartByUserId(userId); // Este método agora deve retornar o carrinho com a coleção gerenciada
-        // Se cart.getUser() puder ser nulo, adicione uma verificação aqui ou garanta que nunca seja nulo.
+        Cart cart = findOrCreateCartByUserId(userId);
         logger.debug("addToCart - Carrinho obtido/criado: cartId={}, userId={}, itemsCount={}", 
             cart.getId(), (cart.getUser() != null ? cart.getUser().getId() : "null"), cart.getItems() != null ? cart.getItems().size() : "null");
 
@@ -57,71 +51,62 @@ public class CartService {
             });
         logger.debug("addToCart - Produto encontrado: productId={}, productName='{}'", product.getId(), product.getName());
 
-        // Trabalhe diretamente com a coleção 'cart.getItems()'
         CartItem item = cart.getItems().stream()
             .filter(ci -> ci.getProduct() != null && ci.getProduct().getId().equals(productId))
             .findFirst()
             .orElseGet(() -> {
                 logger.info("addToCart - Criando novo CartItem para productId={} no cartId={}", productId, cart.getId());
                 CartItem newItem = new CartItem();
-                newItem.setCart(cart); // Importante para a relação bidirecional
+                newItem.setCart(cart);
                 newItem.setProduct(product);
-                newItem.setPrice(product.getPrice());
-                // Adiciona o novo item à coleção gerenciada do carrinho
-                // Se a relação Cart -> CartItem for bidirecional e o Cart for o "owner" com CascadeType.ALL ou PERSIST,
-                // esta adição será refletida quando o 'cart' for salvo.
+                newItem.setPrice(product.getPrice()); // Definir o preço no momento da adição
                 cart.getItems().add(newItem); 
                 return newItem;
             });
+        
+        // Atualizar o preço do item caso o preço do produto tenha mudado desde a última vez que foi adicionado.
+        // Isso é opcional e depende da regra de negócio. Se o preço deve ser fixado no momento da adição,
+        // o setPrice acima no orElseGet é suficiente para novos itens. Para itens existentes, pode-se optar por não atualizar
+        // ou atualizar aqui.
+        // item.setPrice(product.getPrice()); 
 
-        // Log antes de definir a quantidade
         logger.debug("addToCart - CartItem (itemId={}) antes da atualização da quantidade: currentQuantity={}",
             item.getId(), item.getQuantity());
         
         item.setQuantity(quantity);
 
-        // Log depois de definir a quantidade
         logger.info("addToCart - CartItem (itemId={}) atualizado: newQuantity={}", 
             item.getId(), item.getQuantity());
 
         if (item.getQuantity() <= 0) {
             logger.info("addToCart - Quantidade <= 0, removendo CartItem: itemId={}, productId={}", item.getId(), productId);
-            // Remove o item da coleção gerenciada do carrinho
             cart.getItems().remove(item);
-            // Se orphanRemoval=true estiver no Cart para a coleção items,
-            // o Hibernate deletará o CartItem quando o 'cart' for salvo e o item não estiver mais na coleção.
-            // Se não, você pode precisar deletar explicitamente:
-            if (item.getId() != null) { // Apenas se já foi persistido
-                 cartItemRepository.delete(item); // Pode ser redundante com orphanRemoval=true
+            if (item.getId() != null) { 
+                 cartItemRepository.delete(item);
             }
             logger.debug("addToCart - CartItem removido da coleção: itemId={}", item.getId());
         } else {
-            // Se o item é novo (item.getId() == null), ele será persistido quando o 'cart' for salvo
-            // devido ao cascade (se configurado como CascadeType.PERSIST ou ALL).
-            // Se o item já existe, suas alterações (quantidade) serão salvas.
-            // Salvar o item explicitamente aqui é seguro e garante a persistência se o cascade não estiver configurado para cobrir.
-            CartItem savedItem = cartItemRepository.save(item);
+            CartItem savedItem = cartItemRepository.save(item); // Salva ou atualiza o item
             logger.debug("addToCart - CartItem salvo/atualizado: itemId={}, productId={}, quantity={}", 
                 savedItem.getId(), savedItem.getProduct().getId(), savedItem.getQuantity());
+            // Se o item era novo e foi adicionado à coleção 'cart.getItems()',
+            // e não estava na lista antes do save(item), pode ser necessário re-adicioná-lo
+            // ou garantir que a instância 'item' seja a gerenciada.
+            // No entanto, como 'item' é obtido do stream ou criado e adicionado à coleção do cart,
+            // e depois salvo, o Hibernate deve gerenciar corretamente.
         }
         
-        // Salvar o 'cart' persistirá as mudanças na sua coleção 'items' (novos itens, itens removidos se orphanRemoval=true)
-        Cart savedCart = cartRepository.save(cart);
+        Cart savedCart = cartRepository.save(cart); // Salva o carrinho, o que deve cascatear as alterações nos itens
         logger.debug("addToCart - Carrinho salvo: cartId={}", savedCart.getId());
         
-        // NÃO substitua a coleção de itens aqui. A instância 'savedCart' já tem a coleção correta.
-        // List<CartItem> finalItems = getCartItemsByCartId(savedCart.getId());
-        // savedCart.setItems(finalItems); 
-
         if (logger.isDebugEnabled()) {
-            // Use a coleção diretamente de savedCart.getItems()
             String itemsDetails = savedCart.getItems().stream()
                 .map(ci -> String.format("Item[id=%s, prodId=%s, qty=%d]", ci.getId(), (ci.getProduct() != null ? ci.getProduct().getId() : "null"), ci.getQuantity()))
                 .collect(Collectors.joining(", "));
             logger.debug("addToCart - Itens finais no carrinho: cartId={}, items=[{}]", savedCart.getId(), itemsDetails);
         }
         logger.info("addToCart - Fim: cartId={}, userId={}", savedCart.getId(), userId);
-        return savedCart; // Retorna o carrinho com sua coleção gerenciada e atualizada
+        return savedCart;
     }
 
     @Transactional
@@ -139,37 +124,51 @@ public class CartService {
             logger.info("removeItemFromCart - Removendo CartItem: itemId={}, productId={} do cartId={}", 
                 itemToRemove.getId(), productId, cart.getId());
             cart.getItems().remove(itemToRemove); 
-            cartItemRepository.delete(itemToRemove);
-            logger.debug("removeItemFromCart - CartItem deletado do repositório: itemId={}", itemToRemove.getId());
+            if (itemToRemove.getId() != null) { // Garante que o item existe no banco antes de tentar deletar
+                cartItemRepository.delete(itemToRemove);
+            }
+            logger.debug("removeItemFromCart - CartItem removido da coleção e/ou repositório: itemId={}", itemToRemove.getId());
+            // Salvar o carrinho após a remoção do item para garantir que o estado da coleção seja persistido
+            // e o orphanRemoval (se aplicável) seja acionado corretamente.
+            cart = cartRepository.save(cart);
         } else {
             logger.warn("removeItemFromCart - Item não encontrado no carrinho para remoção: productId={}, cartId={}", 
                 productId, cart.getId());
         }
         
-        List<CartItem> finalItems = getCartItemsByCartId(cart.getId());
-        cart.setItems(finalItems);
+        // A coleção cart.getItems() já está atualizada. Não é necessário recarregar.
+        if (logger.isDebugEnabled()) {
+            String itemsDetails = cart.getItems().stream()
+                .map(ci -> String.format("Item[id=%s, prodId=%s, qty=%d]", ci.getId(), (ci.getProduct() != null ? ci.getProduct().getId() : "null"), ci.getQuantity()))
+                .collect(Collectors.joining(", "));
+            logger.debug("removeItemFromCart - Itens finais no carrinho: cartId={}, items=[{}]", cart.getId(), itemsDetails);
+        }
         logger.info("removeItemFromCart - Fim: cartId={}, userId={}", cart.getId(), userId);
         return cart;
     }
 
     @Transactional
-    public void clearCart(UUID userId) {
+    public Cart clearCart(UUID userId) { // Modificado para retornar Cart
         logger.info("clearCart - Início: userId={}", userId);
         Cart cart = findCartByUserId(userId);
         logger.debug("clearCart - Carrinho encontrado: cartId={}", cart.getId());
         
         if (cart.getItems() != null && !cart.getItems().isEmpty()) {
             logger.info("clearCart - Removendo {} itens do cartId={}", cart.getItems().size(), cart.getId());
-            cartItemRepository.deleteAll(cart.getItems()); 
+            // Para orphanRemoval=true, limpar a coleção e salvar o pai é suficiente.
+            // A deleção explícita garante, mas pode ser redundante.
+            cartItemRepository.deleteAllInBatch(new ArrayList<>(cart.getItems())); // Mais eficiente para múltiplos deletes
             cart.getItems().clear(); 
             logger.debug("clearCart - Itens deletados e coleção em memória limpa.");
         } else {
             logger.info("clearCart - Carrinho já estava vazio ou sem itens: cartId={}", cart.getId());
         }
-        // cartRepository.save(cart); // Considerar se é necessário salvar o carrinho após limpar os itens
-        logger.info("clearCart - Fim: userId={}", userId);
+        Cart savedCart = cartRepository.save(cart); // Salva o carrinho com a lista de itens vazia
+        logger.info("clearCart - Fim: userId={}, cartId={}", userId, savedCart.getId());
+        return savedCart; // Retorna o carrinho (agora vazio)
     }
 
+    // Este método é auxiliar e não precisa de alteração para o contrato de resposta.
     public List<CartItem> getCartItemsByCartId(UUID cartId) {
         logger.debug("getCartItemsByCartId - Buscando itens para cartId={}", cartId);
         List<CartItem> items = cartItemRepository.findByCart_Id(cartId);
@@ -183,38 +182,34 @@ public class CartService {
             .orElseGet(() -> { 
                 logger.info("findOrCreateCartByUserId - Carrinho não encontrado para userId={}, criando novo.", userId);
                 User user = userService.findById(userId);
-                if (user == null) { // Adicionar verificação para usuário nulo
+                if (user == null) {
                     logger.error("findOrCreateCartByUserId - Usuário não encontrado com ID: {}", userId);
                     throw new RuntimeException("Usuário não encontrado para criar carrinho: " + userId);
                 }
                 Cart newCart = new Cart();
                 newCart.setUser(user);
                 newCart.setStatus("active");
-                newCart.setItems(new ArrayList<>()); // Inicializa com uma nova lista gerenciável
+                // A entidade Cart já deve inicializar 'items = new ArrayList<>()'
+                // newCart.setItems(new ArrayList<>()); // Desnecessário se inicializado na entidade
                 Cart savedNewCart = cartRepository.save(newCart);
                 logger.info("findOrCreateCartByUserId - Novo carrinho criado e salvo: cartId={}, userId={}", 
                     savedNewCart.getId(), userId);
-                return savedNewCart; // Retorna o carrinho persistido com sua coleção gerenciada
+                return savedNewCart;
             });
 
-        // Se o carrinho foi encontrado, sua coleção 'items' é gerenciada pelo Hibernate.
-        // Se for LAZY, será carregada ao ser acessada dentro de uma transação.
-        // Não substitua a coleção. Apenas garanta que não seja nula se a entidade permitir.
+        // A coleção 'items' é gerenciada pelo Hibernate.
+        // Se for LAZY, será carregada ao ser acessada (ex: pela serialização JSON).
+        // A inicialização 'private List<CartItem> items = new ArrayList<>();' na entidade Cart
+        // garante que cart.getItems() nunca seja null.
+        // A verificação abaixo é uma salvaguarda, mas idealmente não seria necessária.
         if (cart.getItems() == null) {
-            // Isso não deveria acontecer se a entidade Cart sempre inicializa 'items'
-            // (ex: private List<CartItem> items = new ArrayList<>(); na declaração do campo)
-            // ou se o construtor o faz.
-            logger.warn("findOrCreateCartByUserId - Coleção de itens era nula para cartId={}, inicializando com nova lista (pode causar problemas com orphanRemoval se esta instância de cart já era gerenciada).", cart.getId());
+            logger.warn("findOrCreateCartByUserId - Coleção de itens era nula para cartId={}, inicializando com nova lista. Verifique a inicialização na entidade Cart.", cart.getId());
             cart.setItems(new ArrayList<>());
         }
         
-        // Forçar o carregamento se for LAZY e você precisar dos itens aqui (opcional)
-        // O simples acesso dentro de uma transação já deve carregar.
-        // Ex: int itemCount = cart.getItems().size();
-        
         logger.debug("findOrCreateCartByUserId - Fim: cartId={}, userId={}, itemsCount={}", 
             cart.getId(), (cart.getUser() != null ? cart.getUser().getId() : "null"), (cart.getItems() != null ? cart.getItems().size() : "null"));
-        return cart; // Retorna o carrinho com sua coleção gerenciada
+        return cart;
     }
 
     public Cart findCartByUserId(UUID userId) {
@@ -225,31 +220,27 @@ public class CartService {
                 return new RuntimeException("Carrinho não encontrado para o usuário: " + userId);
             });
         
-        // Similar a findOrCreateCartByUserId, não substitua a coleção.
-        // Apenas garanta que não seja nula se a entidade permitir.
         if (cart.getItems() == null) {
-            logger.warn("findCartByUserId - Coleção de itens era nula para cartId={}, inicializando.", cart.getId());
+            logger.warn("findCartByUserId - Coleção de itens era nula para cartId={}, inicializando. Verifique a inicialização na entidade Cart.", cart.getId());
             cart.setItems(new ArrayList<>());
         }
-        // Forçar o carregamento se for LAZY (opcional)
-        // int itemCount = cart.getItems().size();
 
         logger.debug("findCartByUserId - Fim: cartId={}, userId={}, itemsCount={}", 
             cart.getId(), (cart.getUser() != null ? cart.getUser().getId() : "null"), (cart.getItems() != null ? cart.getItems().size() : "null"));
         return cart;
     }
 
-     @Transactional
-    public void deleteCart(Cart cart) {
+    @Transactional
+    public void deleteCart(Cart cart) { // Este método não é diretamente exposto pela API do carrinho do usuário, mas pode ser usado internamente
         logger.info("deleteCart - Início: cartId={}", cart.getId());
-        // É crucial deletar os CartItems associados antes de deletar o Cart
-        // para evitar erros de constraint de chave estrangeira, a menos que
-        // o cascade esteja configurado como CascadeType.ALL ou CascadeType.REMOVE
-        // na relação Cart -> CartItem.
-        List<CartItem> items = getCartItemsByCartId(cart.getId());
-        if (items != null && !items.isEmpty()) {
-            logger.debug("deleteCart - Deletando {} itens do cartId={}", items.size(), cart.getId());
-            cartItemRepository.deleteAll(items);
+        // Se CascadeType.ALL ou REMOVE estiver na relação Cart -> CartItems,
+        // a deleção dos itens será automática.
+        // Caso contrário, a exclusão manual é necessária.
+        // A inicialização da lista na entidade Cart garante que getItems() não seja nulo.
+        if (!cart.getItems().isEmpty()) {
+            logger.debug("deleteCart - Deletando {} itens do cartId={}", cart.getItems().size(), cart.getId());
+            cartItemRepository.deleteAllInBatch(new ArrayList<>(cart.getItems())); // Passa uma cópia para evitar ConcurrentModificationException se a coleção for modificada durante a iteração
+            cart.getItems().clear(); // Limpa a coleção em memória
         } else {
             logger.debug("deleteCart - Nenhum item encontrado para deletar no cartId={}", cart.getId());
         }

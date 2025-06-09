@@ -83,10 +83,10 @@ public class CartController {
         return ResponseEntity.ok(updatedCart);
     }
 
-    @DeleteMapping("/clear")
-    public ResponseEntity<Void> clearCart() {
+    @DeleteMapping("/clear") // Ou o endpoint que o frontend está usando para limpar o carrinho
+    public ResponseEntity<Cart> clearMyCart() { // Alterado de ResponseEntity<Void> para ResponseEntity<Cart>
         UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        cartService.clearCart(userId);
-        return ResponseEntity.noContent().build();
+        Cart clearedCart = cartService.clearCart(userId); // cartService.clearCart agora retorna o Cart
+        return ResponseEntity.ok(clearedCart); // Retorna o carrinho (vazio)
     }
 }
